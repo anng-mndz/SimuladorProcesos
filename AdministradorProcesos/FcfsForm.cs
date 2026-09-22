@@ -1,3 +1,5 @@
+//Angoly Camila Araujo Mayen
+//9959-24- 17623
 using System.Windows.Forms;
 
 namespace AdministradorProcesos
