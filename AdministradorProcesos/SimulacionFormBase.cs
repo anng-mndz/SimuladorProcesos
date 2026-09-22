@@ -8,7 +8,8 @@ namespace AdministradorProcesos
 {
     // ============================================================
     // FORMULARIO BASE DE SIMULACION
-    //
+    // Formulario base hecho por: Angel Mendez
+    // con ayuda de Camila Araujo y Karina Arriaza y logramos toda la base de la simulacion en conjunto
     // Contiene todo lo que comparten los 4 algoritmos:
     //   1) Tabla de procesos de entrada
     //   2) Diagrama de Gantt paso a paso (con reproduccion automatica)
