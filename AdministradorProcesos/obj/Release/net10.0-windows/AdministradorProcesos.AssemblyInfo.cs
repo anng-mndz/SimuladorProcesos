@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AdministradorProcesos")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f3c931a750e6cf9ab643833d4aca07402d310975")]
 [assembly: System.Reflection.AssemblyProductAttribute("AdministradorProcesos")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AdministradorProcesos")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
