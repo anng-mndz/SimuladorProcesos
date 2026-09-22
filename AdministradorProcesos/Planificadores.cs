@@ -74,7 +74,7 @@ namespace AdministradorProcesos
         }
     }
 
-    // FCFS: First Come, First Served. El que llega primero, corre primero.
+    // FCFS: First Come, First Served. El que llega primero, corre primero. Angoly Camila Araujo Mayen 9959-24-17623
     public class FcfsPlanificador : IPlanificador
     {
         public string Nombre => "FCFS";
