@@ -123,14 +123,14 @@ namespace AdministradorProcesos
     // numero de prioridad (desempate por llegada y luego por nombre).
     public class PrioridadPlanificador : IPlanificador
     {
-        public string Nombre => "Prioridad";
-        public string Descripcion => "Entre los procesos ya llegados, corre primero el de mayor prioridad (numero mas bajo = mas prioritario).";
-        public bool EsPreemptivo => false;
+        public string Nombre => "Prioridad";//nombre del algoritmo
+        public string Descripcion => "Entre los procesos ya llegados, corre primero el de mayor prioridad (numero mas bajo = mas prioritario).";//Descripción del funcionamiento
+        public bool EsPreemptivo => false;//Indicara si el algoritmo es o no se interrumpira
 
         public List<SegmentoGantt> Planificar(List<ProcesoSimulado> procesos, int tiempoInicio, int quantum)
         {
             return PlanificadorNoPreemptivo.Ejecutar(procesos, tiempoInicio,
-                candidatos => candidatos.OrderBy(p => p.Prioridad).ThenBy(p => p.Llegada).ThenBy(p => p.Nombre).First());
+                candidatos => candidatos.OrderBy(p => p.Prioridad).ThenBy(p => p.Llegada).ThenBy(p => p.Nombre).First());//Escogera al proceso con mayor prioridad, si existiera empate el que llegó primero y si no sería por nombre
         }
     }
 

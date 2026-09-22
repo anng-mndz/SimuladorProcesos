@@ -27,11 +27,10 @@ namespace AdministradorProcesos
 
         protected override bool UsaPrioridad => true;
 
-        /// <summary>
         /// Indica a la clase base que este algoritmo NO utiliza Quantum
         /// (el Quantum es propio de algoritmos como Round Robin),
         /// por lo que ese campo se oculta en la interfaz.
-        /// </summary>
+
         protected override bool UsaQuantum => false;
 
         /// Constructor del formulario. Inicializa la interfaz gráfica
