@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 namespace AdministradorProcesos
 {
+    // Autor: Angel Méndez
+    // Carnet: 9959-24-6845
+    //
     // Ventana de inicio: reemplaza al antiguo administrador de procesos
     // de Windows. Desde aqui se accede a cada algoritmo en su propio
     // formulario.
@@ -22,6 +25,9 @@ namespace AdministradorProcesos
             ConfigurarControles();
         }
 
+        // Arma toda la interfaz del menú principal: título, subtítulo,
+        // separador, una tarjeta por cada algoritmo disponible y el
+        // botón de salir.
         private void ConfigurarControles()
         {
             int x = 40;
@@ -56,6 +62,8 @@ namespace AdministradorProcesos
             Controls.Add(sep);
             y += 24;
 
+            // Una tarjeta por cada algoritmo de planificación implementado,
+            // cada una abre su propio formulario de simulación al presionar "Abrir".
             AgregarTarjetaAlgoritmo(x, ref y, anchoContenido,
                 "FCFS", "First Come, First Served",
                 "Los procesos corren en el orden en que llegan, sin interrupciones. El mas simple de todos.",
@@ -84,6 +92,10 @@ namespace AdministradorProcesos
             Controls.Add(btnSalir);
         }
 
+        // Crea y agrega al formulario una "tarjeta" (panel) que representa
+        // un algoritmo: muestra su nombre, subnombre, descripción y un
+        // botón que abre el formulario de simulación correspondiente
+        // (recibido como una función que lo construye) en un diálogo modal.
         private void AgregarTarjetaAlgoritmo(int x, ref int y, int ancho, string nombre, string subnombre, string descripcion, Func<Form> crearFormulario)
         {
             var tarjeta = new Panel
@@ -121,6 +133,8 @@ namespace AdministradorProcesos
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
 
+            // Botón que, al hacer clic, crea el formulario del algoritmo
+            // correspondiente y lo muestra como ventana modal (ShowDialog).
             var btnAbrir = Tema.CrearBotonPrimario("Abrir simulacion →");
             btnAbrir.Bounds = new Rectangle(ancho - 190, 20, 170, 36);
             btnAbrir.Anchor = AnchorStyles.Top | AnchorStyles.Right;
