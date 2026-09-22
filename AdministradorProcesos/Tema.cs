@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 namespace AdministradorProcesos
 {
+    // Autor: Angel Méndez
+    // Carnet: 9959-24-6845
+    //
     // ============================================================
     // TEMA VISUAL
     // Paleta y helpers de estilo compartidos por todos los
@@ -11,6 +14,7 @@ namespace AdministradorProcesos
     // ============================================================
     public static class Tema
     {
+        // Colores base usados en toda la interfaz (fondo, paneles, botones, textos, bordes).
         public static readonly Color Fondo = Color.FromArgb(244, 246, 250);
         public static readonly Color Panel = Color.White;
         public static readonly Color Primario = Color.FromArgb(45, 108, 223);
@@ -25,6 +29,7 @@ namespace AdministradorProcesos
         public static readonly Color BordeGrid = Color.FromArgb(226, 230, 237);
         public static readonly Color BordeSeccion = Color.FromArgb(230, 233, 239);
 
+        // Fuentes base usadas en títulos, subtítulos, secciones, texto normal y botones.
         public static readonly Font FuenteTitulo = new Font("Segoe UI Semibold", 17f, FontStyle.Bold);
         public static readonly Font FuenteSubtitulo = new Font("Segoe UI", 10.5f);
         public static readonly Font FuenteSeccion = new Font("Segoe UI Semibold", 11f, FontStyle.Bold);
@@ -45,6 +50,9 @@ namespace AdministradorProcesos
             Color.FromArgb(124, 179, 66),  // lima
         };
 
+        // Asigna siempre el mismo color a un mismo nombre de proceso,
+        // usando el hash del nombre para elegir un índice fijo dentro
+        // de la paleta (así el color de "P1" no cambia entre repintados).
         public static Color ColorParaProceso(string nombre)
         {
             if (string.IsNullOrEmpty(nombre)) return PaletaProcesos[0];
@@ -52,6 +60,9 @@ namespace AdministradorProcesos
             return PaletaProcesos[indice];
         }
 
+        // Crea un botón plano con el estilo base del tema (colores, cursor,
+        // borde opcional y efecto hover), reutilizado por los demás
+        // métodos CrearBoton* para no repetir código.
         public static Button CrearBoton(string texto, Color fondo, Color texto2, Color? borde = null)
         {
             var b = new Button
@@ -70,6 +81,8 @@ namespace AdministradorProcesos
             return b;
         }
 
+        // Variantes rápidas de CrearBoton para los estilos más usados:
+        // primario (azul), éxito (verde), peligro (rojo) y secundario (borde).
         public static Button CrearBotonPrimario(string texto) => CrearBoton(texto, Primario, Color.White);
         public static Button CrearBotonExito(string texto) => CrearBoton(texto, Exito, Color.White);
         public static Button CrearBotonPeligro(string texto) => CrearBoton(texto, Peligro, Color.White);
@@ -80,6 +93,8 @@ namespace AdministradorProcesos
             return b;
         }
 
+        // Crea una etiqueta de encabezado de sección, con formato
+        // "numero   texto" (ej. "1   Configuración").
         public static Label CrearEncabezadoSeccion(string numero, string texto)
         {
             return new Label
@@ -92,6 +107,8 @@ namespace AdministradorProcesos
             };
         }
 
+        // Crea una línea delgada horizontal usada para separar secciones
+        // visualmente dentro del formulario.
         public static Panel CrearSeparador(int ancho)
         {
             return new Panel
@@ -103,6 +120,9 @@ namespace AdministradorProcesos
             };
         }
 
+        // Aplica el estilo visual del tema (colores, bordes, encabezados,
+        // fuentes, selección, filas alternadas) a un DataGridView existente,
+        // para que todas las tablas de la app se vean iguales.
         public static void EstilizarGrid(DataGridView g)
         {
             g.BackgroundColor = Panel;
