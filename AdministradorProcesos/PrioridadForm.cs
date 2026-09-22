@@ -1,3 +1,5 @@
+//Karina Alejandra Arriaza Ortiz
+//9959-24-14190
 using System.Windows.Forms;
 
 namespace AdministradorProcesos
