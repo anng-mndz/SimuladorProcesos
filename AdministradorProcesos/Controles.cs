@@ -7,6 +7,14 @@ using System.Windows.Forms;
 
 namespace AdministradorProcesos
 {
+    // Autor: Angel Méndez
+    // Carnet: 9959-24-6845
+    //
+    // Este archivo contiene los controles personalizados (paneles) encargados
+    // de dibujar la parte visual de la simulación: el diagrama de Gantt,
+    // el panel de "quién está corriendo / quién espera" y el panel de
+    // estados de cada proceso.
+
     // Dibuja el diagrama de Gantt a color, mostrando solo los segmentos
     // hasta "PasoVisible" (para el modo paso a paso).
     public class GanttPanel : Panel
@@ -25,6 +33,10 @@ namespace AdministradorProcesos
             BackColor = Color.White;
         }
 
+        // Se ejecuta cada vez que el panel necesita redibujarse.
+        // Dibuja un rectángulo de color por cada segmento visible del Gantt,
+        // resalta el último segmento dibujado y muestra los tiempos
+        // de inicio/fin debajo de la barra.
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -32,6 +44,8 @@ namespace AdministradorProcesos
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
+            // Si aún no hay segmentos o no se ha avanzado ningún paso,
+            // se muestra un mensaje de ayuda en vez del diagrama.
             if (Segmentos == null || Segmentos.Count == 0 || PasoVisible == 0)
             {
                 using var fuenteVacio = new Font("Segoe UI", 9.5f, FontStyle.Italic);
@@ -40,6 +54,8 @@ namespace AdministradorProcesos
                 return;
             }
 
+            // Calcula la escala (píxeles por unidad de tiempo) según el
+            // tiempo total de la simulación y el ancho disponible del panel.
             int tiempoTotal = Segmentos.Max(s => s.Fin);
             int margen = 20;
             float anchoUtil = Width - margen * 2;
@@ -50,6 +66,8 @@ namespace AdministradorProcesos
             using var fuenteEtiqueta = new Font("Segoe UI Semibold", 9.5f, FontStyle.Bold);
             using var fuenteTiempo = new Font("Segoe UI", 8f);
 
+            // Recorre solo los segmentos hasta PasoVisible (para el modo
+            // paso a paso) y dibuja cada uno como una barra de color.
             for (int i = 0; i < PasoVisible && i < Segmentos.Count; i++)
             {
                 var seg = Segmentos[i];
@@ -62,12 +80,16 @@ namespace AdministradorProcesos
                 using (var brush = new SolidBrush(color))
                     g.FillRectangle(brush, rect);
 
+                // Al último segmento dibujado se le agrega un borde
+                // más grueso para resaltarlo como el turno actual.
                 if (esUltimo)
                 {
                     using var penResaltado = new Pen(Color.FromArgb(35, 40, 55), 3);
                     g.DrawRectangle(penResaltado, x, y, Math.Max(ancho - 2, 1), alturaBarra);
                 }
 
+                // Dibuja el nombre del proceso centrado dentro de la barra,
+                // solo si hay espacio suficiente.
                 var tamNombre = g.MeasureString(seg.Nombre, fuenteEtiqueta);
                 if (ancho > tamNombre.Width)
                 {
@@ -75,11 +97,14 @@ namespace AdministradorProcesos
                         x + (ancho - tamNombre.Width) / 2, y + (alturaBarra - tamNombre.Height) / 2);
                 }
 
+                // Muestra el tiempo de inicio de cada barra, y el tiempo
+                // de fin solo en la última barra dibujada.
                 g.DrawString(seg.Inicio.ToString(), fuenteTiempo, Brushes.DimGray, x - 4, y + alturaBarra + 4);
                 if (i == PasoVisible - 1)
                     g.DrawString(seg.Fin.ToString(), fuenteTiempo, Brushes.DimGray, x + ancho - 8, y + alturaBarra + 4);
             }
 
+            // Línea base debajo de todas las barras del Gantt.
             using var penBase = new Pen(Tema.BordeGrid, 1);
             g.DrawLine(penBase, margen, y + alturaBarra + 20, Width - margen, y + alturaBarra + 20);
         }
@@ -103,6 +128,9 @@ namespace AdministradorProcesos
             BackColor = Color.White;
         }
 
+        // Dibuja la tarjeta del proceso que está corriendo actualmente,
+        // seguida de una flecha y las tarjetas (más pequeñas y semitransparentes)
+        // de los procesos que están en cola de espera.
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -116,6 +144,8 @@ namespace AdministradorProcesos
             int y = 10;
             int alturaTarjeta = 46;
 
+            // Si no hay proceso ejecutando ni procesos en espera,
+            // se muestra un mensaje de ayuda.
             if (string.IsNullOrEmpty(Ejecutando) && (EnEspera == null || EnEspera.Count == 0))
             {
                 using var fuenteVacio = new Font("Segoe UI", 9f, FontStyle.Italic);
@@ -124,6 +154,7 @@ namespace AdministradorProcesos
                 return;
             }
 
+            // Tarjeta del proceso en ejecución (color sólido, con borde).
             if (!string.IsNullOrEmpty(Ejecutando))
             {
                 var color = Tema.ColorParaProceso(Ejecutando);
@@ -140,11 +171,14 @@ namespace AdministradorProcesos
 
                 x += ancho + 24;
 
+                // Flecha y etiqueta "espera →" que separan la tarjeta
+                // en ejecución de las tarjetas en espera.
                 using var penFlecha = new Pen(Tema.TextoSuave, 2);
                 g.DrawLine(penFlecha, x - 18, y + alturaTarjeta / 2, x - 6, y + alturaTarjeta / 2);
                 g.DrawString("espera →", fuenteChico, Brushes.Gray, x - 18, y + alturaTarjeta / 2 + 8);
             }
 
+            // Tarjetas de los procesos en espera (color más claro/semitransparente).
             if (EnEspera != null)
             {
                 foreach (var nombre in EnEspera)
@@ -183,6 +217,9 @@ namespace AdministradorProcesos
             Padding = new Padding(8);
         }
 
+        // Reconstruye todas las tarjetas (chips) del panel a partir de la
+        // lista de procesos y su estado actual. Si no hay procesos, muestra
+        // un mensaje de ayuda en su lugar.
         public void Actualizar(IEnumerable<(string Nombre, EstadoProceso Estado)> items)
         {
             SuspendLayout();
@@ -210,6 +247,8 @@ namespace AdministradorProcesos
             ResumeLayout();
         }
 
+        // Crea la tarjeta (Label estilizado) para un proceso individual,
+        // usando el color y la etiqueta que le corresponden según su estado.
         private Label CrearChip(string nombre, EstadoProceso estado)
         {
             var (colorFondo, colorTexto, etiqueta) = EstiloEstado(estado);
@@ -226,6 +265,8 @@ namespace AdministradorProcesos
             };
         }
 
+        // Devuelve el color de fondo, color de texto y etiqueta a mostrar
+        // según el estado del proceso (Nuevo, Listo, Ejecutando, Terminado, Cancelado).
         private (Color fondo, Color texto, string etiqueta) EstiloEstado(EstadoProceso estado)
         {
             switch (estado)
