@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace AdministradorProcesos
 {
+    // Autores principales del archivo: Angel Méndez, Camila Araujo y Karina Arriaza
+    //
     // ============================================================
     // PLANIFICADORES
     //
@@ -21,6 +23,9 @@ namespace AdministradorProcesos
     // alcanza a terminar dentro de ese calculo.
     // ============================================================
 
+    // Contrato comun que deben implementar todos los algoritmos de
+    // planificacion, para que el resto de la app (formularios, UI)
+    // pueda trabajar con cualquiera de ellos de la misma forma.
     public interface IPlanificador
     {
         string Nombre { get; }
@@ -35,6 +40,11 @@ namespace AdministradorProcesos
     // siguiente proceso quisiera correr.
     internal static class PlanificadorNoPreemptivo
     {
+        // Motor comun: mientras haya procesos pendientes, elige el
+        // siguiente a ejecutar con el criterio recibido (elegirSiguiente),
+        // lo corre hasta terminar su rafaga completa y arma el segmento
+        // de Gantt correspondiente. Si nadie ha llegado aun, el reloj
+        // salta hasta la proxima llegada (CPU ocioso).
         public static List<SegmentoGantt> Ejecutar(
             List<ProcesoSimulado> procesos,
             int tiempoInicio,
@@ -75,6 +85,8 @@ namespace AdministradorProcesos
     }
 
     // FCFS: First Come, First Served. El que llega primero, corre primero. Angoly Camila Araujo Mayen 9959-24-17623
+    // Criterio de seleccion: el proceso con menor tiempo de llegada
+    // (desempate por nombre) es el siguiente en correr.
     public class FcfsPlanificador : IPlanificador
     {
         public string Nombre => "FCFS";
@@ -90,6 +102,8 @@ namespace AdministradorProcesos
 
     // SJF no preemptivo: Shortest Job First. De los que ya llegaron, corre
     // primero el que tiene la rafaga de CPU mas corta. Angoly Camila Araujo Mayen 9959-24-17623
+    // Criterio de seleccion: entre los candidatos ya llegados, el de menor
+    // rafaga restante (desempate por llegada y luego por nombre).
     public class SjfPlanificador : IPlanificador
     {
         public string Nombre => "SJF";
@@ -104,6 +118,8 @@ namespace AdministradorProcesos
     }
 
     // Prioridad no preemptiva. Convencion: numero mas bajo = mayor prioridad.
+    // Criterio de seleccion: entre los candidatos ya llegados, el de menor
+    // numero de prioridad (desempate por llegada y luego por nombre).
     public class PrioridadPlanificador : IPlanificador
     {
         public string Nombre => "Prioridad";
@@ -117,7 +133,11 @@ namespace AdministradorProcesos
         }
     }
 
-    // Round Robin: preemptivo por quantum, con cola circular.
+    // Round Robin (Angel Mendez): preemptivo por quantum, con cola circular.
+    // A diferencia de los algoritmos no preemptivos, aqui cada proceso
+    // corre solo hasta agotar su quantum (o menos, si le falta menos
+    // que eso); si no termina, vuelve al final de la cola para esperar
+    // su siguiente turno.
     public class RoundRobinPlanificador : IPlanificador
     {
         public string Nombre => "Round Robin";
@@ -136,6 +156,9 @@ namespace AdministradorProcesos
             int tiempoActual = tiempoInicio;
             var enCola = new HashSet<string>();
 
+            // Mueve a la cola circular todos los procesos que ya
+            // llegaron (Llegada <= tiempoActual) y que aun no estan
+            // encolados, evitando duplicados con el set "enCola".
             void EncolarLlegadas()
             {
                 foreach (var p in pendientesPorLlegar.ToList())
@@ -152,6 +175,8 @@ namespace AdministradorProcesos
             EncolarLlegadas();
             if (cola.Count == 0 && pendientesPorLlegar.Count > 0)
             {
+                // Si todavia no ha llegado nadie, el reloj salta
+                // hasta la proxima llegada (CPU ocioso).
                 tiempoActual = pendientesPorLlegar.Min(p => p.Llegada);
                 EncolarLlegadas();
             }
@@ -163,6 +188,8 @@ namespace AdministradorProcesos
 
                 var enEspera = cola.Select(p => p.Nombre).ToList();
 
+                // El proceso corre por un quantum completo, o por lo que
+                // le quede si es menor que el quantum.
                 int ejecutado = Math.Min(quantum, actual.RestanteRafaga);
                 int inicio = tiempoActual;
                 tiempoActual += ejecutado;
@@ -170,10 +197,13 @@ namespace AdministradorProcesos
 
                 gantt.Add(new SegmentoGantt { Nombre = actual.Nombre, Inicio = inicio, Fin = tiempoActual, EnEspera = enEspera });
 
+                // Despues de cada turno se revisa si llegaron nuevos
+                // procesos durante ese intervalo, para encolarlos.
                 EncolarLlegadas();
 
                 if (actual.RestanteRafaga > 0)
                 {
+                    // No termino: vuelve al final de la cola.
                     cola.Enqueue(actual);
                     enCola.Add(actual.Nombre);
                 }
@@ -184,6 +214,8 @@ namespace AdministradorProcesos
 
                 if (cola.Count == 0 && pendientesPorLlegar.Count > 0)
                 {
+                    // La cola quedo vacia pero aun faltan procesos por
+                    // llegar: el reloj salta hasta la proxima llegada.
                     tiempoActual = pendientesPorLlegar.Min(p => p.Llegada);
                     EncolarLlegadas();
                 }
