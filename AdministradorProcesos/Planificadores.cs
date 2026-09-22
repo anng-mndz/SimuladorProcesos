@@ -89,7 +89,7 @@ namespace AdministradorProcesos
     }
 
     // SJF no preemptivo: Shortest Job First. De los que ya llegaron, corre
-    // primero el que tiene la rafaga de CPU mas corta.
+    // primero el que tiene la rafaga de CPU mas corta. Angoly Camila Araujo Mayen 9959-24-17623
     public class SjfPlanificador : IPlanificador
     {
         public string Nombre => "SJF";
