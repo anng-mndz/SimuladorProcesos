@@ -117,6 +117,7 @@ namespace AdministradorProcesos
         }
     }
 
+    //Karina Alejandra Arriaza Ortiz 9959-24-14190
     // Prioridad no preemptiva. Convencion: numero mas bajo = mayor prioridad.
     // Criterio de seleccion: entre los candidatos ya llegados, el de menor
     // numero de prioridad (desempate por llegada y luego por nombre).
