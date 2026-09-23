@@ -34,6 +34,17 @@ namespace AdministradorProcesos
             int anchoContenido = 640;
             int y = 34;
 
+            // Botón que abre el manual de usuario (PDF embebido) en una ventana propia.
+            var btnManual = Tema.CrearBotonSecundario("📖 Manual");
+            btnManual.Bounds = new Rectangle(x + anchoContenido - 130, y, 130, 34);
+            btnManual.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnManual.Click += (s, e) =>
+            {
+                using var manual = new ManualForm();
+                manual.ShowDialog(this);
+            };
+            Controls.Add(btnManual);
+
             var lblTitulo = new Label
             {
                 Text = "Simulador de Planificacion de Procesos",

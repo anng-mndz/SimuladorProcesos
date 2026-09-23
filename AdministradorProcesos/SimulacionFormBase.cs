@@ -110,6 +110,17 @@ namespace AdministradorProcesos
             btnVolver.Click += (s, e) => Close();
             Controls.Add(btnVolver);
 
+            // Botón que abre el manual de usuario (PDF embebido) en una ventana propia.
+            var btnManual = Tema.CrearBotonSecundario("📖 Manual");
+            btnManual.Bounds = new Rectangle(x + anchoContenido - 260, 22, 100, 32);
+            btnManual.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnManual.Click += (s, e) =>
+            {
+                using var manual = new ManualForm();
+                manual.ShowDialog(this);
+            };
+            Controls.Add(btnManual);
+
             // ---------- 1) Tabla de entrada ----------
             var lblEntrada = Tema.CrearEncabezadoSeccion("1)", "Procesos de entrada");
             lblEntrada.Location = new Point(x, y);
